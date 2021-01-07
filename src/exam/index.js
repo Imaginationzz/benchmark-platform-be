@@ -43,6 +43,7 @@ examsRouter.post("/exams/start", async (req, res, next) => {
       id: uniqid(),
 
       questions: randQues,
+      answerProvided: [],
     });
     await writeAnswers(exams);
     res.send(exams);
@@ -60,10 +61,9 @@ examsRouter.post(
 
       const examIndex = exams.findIndex((exam) => exam.id === req.params.id);
       if (examIndex !== -1) {
-        exams[examIndex].questions.push({
-          providedAnswer: [...req.body],
+        exams[examIndex].answerProvided.push({
+          ...req.body,
         });
-
         await writeAnswers(exams);
         res.status(201).send(exams);
       } else {
