@@ -52,33 +52,24 @@ examsRouter.post("/exams/start", async (req, res, next) => {
   }
 });
 examsRouter.post(
-  "/exam/:id/answers",
-  answerValidation,
+  "/exams/:id/answers",
 
   async (req, res, next) => {
     try {
-      const validationErrors = validationResult(req);
-      if (!validationErrors.isEmpty()) {
-        const error = new Error();
-        error.httpStatusCode = 400;
-        error.message = validationErrors;
-        next(error);
+      const exams = await getAnswers();
+
+      const examIndex = exams.findIndex((exam) => exam.id === req.params.id);
+      if (examIndex !== -1) {
+        exams[examIndex].questions.push({
+          providedAnswer: [...req.body],
+        });
+
+        await writeAnswers(exams);
+        res.status(201).send(exams);
       } else {
-        const exams = await getAnswers();
-
-        const examIndex = exams.findIndex((exam) => exam.id === req.params.id);
-        if (examIndex !== -1) {
-          exams[examIndex].questions.push({
-            providedAnswer: [...req.body],
-          });
-
-          await writeAnswers(exams);
-          res.status(201).send(exams);
-        } else {
-          const error = new Error();
-          error.httpStatusCode = 404;
-          next(error);
-        }
+        const error = new Error();
+        error.httpStatusCode = 404;
+        next(error);
       }
     } catch (error) {
       console.log(error);
