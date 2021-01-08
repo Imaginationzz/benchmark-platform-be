@@ -16,16 +16,27 @@ const answerValidation = [
 
 const examsRouter = express.Router();
 
-examsRouter.get("/exams/start", async (req, res, next) => {
+// examsRouter.get("/exams/start", async (req, res, next) => {
+//   try {
+//     const questions = await getQuestions();
+//     const randQues = questions[Math.floor(Math.random() * questions.length)];
+//     const randomQuestions = [];
+//     for (let i = 0; i <= 5; i++) {
+//       randomQuestions.push(randQues);
+//     }
+
+//     res.send(randomQuestions);
+//   } catch (error) {
+//     console.log(error);
+//     next(error);
+//   }
+// });
+examsRouter.get("/exams", async (req, res, next) => {
   try {
     const questions = await getQuestions();
     const randQues = questions[Math.floor(Math.random() * questions.length)];
-    const randomQuestions = [];
-    for (let i = 0; i <= 5; i++) {
-      randomQuestions.push(randQues);
-    }
 
-    res.send(randomQuestions);
+    res.send(randQues);
   } catch (error) {
     console.log(error);
     next(error);
